@@ -42,17 +42,7 @@ source ~/kalibr_workspace/devel/setup.bash
 rosrun kalibr <command_you_want_to_run_here>
 ```
 
-To run the kalibr_calibrate_cameras, we have to change CameraUtils.py, which is located /home/brage/kalibr_workspace/src/kalibr/aslam_offline_calibration/kalibr/python/kalibr_camera_calibration/
-Change line 123 and 124 from
-```
-mean = np.mean(rerr_matrix, 0, dtype=np.float)
-std = np.std(rerr_matrix, 0, dtype=np.float)
-```
-to
-```
-mean = np.mean(rerr_matrix, 0, dtype=np.float64)
-std = np.std(rerr_matrix, 0, dtype=np.float64)
-```
+
 
 
 ![Kalibr](https://raw.githubusercontent.com/wiki/ethz-asl/kalibr/images/kalibr_small.png)
