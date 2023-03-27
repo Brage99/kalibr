@@ -1,3 +1,60 @@
+Installation guide from source:
+This works for ROS1 Noetic, Ubuntu 20.04
+
+  1. Install the build and run dependencies:
+ 
+```
+sudo apt-get install -y \
+git wget autoconf automake nano \
+libeigen3-dev libboost-all-dev libsuitesparse-dev \
+doxygen libopencv-dev \
+libpoco-dev libtbb-dev libblas-dev liblapack-dev libv4l-dev
+    
+# Ubuntu 20.04
+sudo apt-get install -y python3-dev python3-pip python3-scipy \
+python3-matplotlib ipython3 python3-wxgtk4.0 python3-tk python3-igraph python3-pyx
+```
+  2. Create a catkin workspace and clone the project
+     First we can create a workspace. It is important to configure this to build in release mode otherwise optimization will be slow.
+```
+mkdir -p ~/kalibr_workspace/src
+cd ~/kalibr_workspace
+export ROS1_DISTRO=noetic # kinetic=16.04, melodic=18.04, noetic=20.04
+source /opt/ros/$ROS1_DISTRO/setup.bash
+catkin init
+catkin config --extend /opt/ros/$ROS1_DISTRO
+catkin config --merge-devel # Necessary for catkin_tools >= 0.4.
+catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release
+```
+We can then clone the project:
+```
+cd ~/kalibr_workspace/src
+git clone https://github.com/Brage99/kalibr.git
+```
+  3. Build the code using the Release configuration. Depending on the available memory, you might need to reduce the build threads (e.g. add -j2 to catkin_make) My pc was to weak to use j4, trying j2. j2 also didnt work, trying j1. This worked.
+```
+cd ~/kalibr_workspace/
+catkin build -DCMAKE_BUILD_TYPE=Release -j4
+```
+  4. Once the build is finished you have to source the catkin workspace setup to use Kalibr
+```
+source ~/kalibr_workspace/devel/setup.bash
+rosrun kalibr <command_you_want_to_run_here>
+```
+
+To run the kalibr_calibrate_cameras, we have to change CameraUtils.py, which is located /home/brage/kalibr_workspace/src/kalibr/aslam_offline_calibration/kalibr/python/kalibr_camera_calibration/
+Change line 123 and 124 from
+```
+mean = np.mean(rerr_matrix, 0, dtype=np.float)
+std = np.std(rerr_matrix, 0, dtype=np.float)
+```
+to
+```
+mean = np.mean(rerr_matrix, 0, dtype=np.float64)
+std = np.std(rerr_matrix, 0, dtype=np.float64)
+```
+
+
 ![Kalibr](https://raw.githubusercontent.com/wiki/ethz-asl/kalibr/images/kalibr_small.png)
 
 [![ROS1 Ubuntu 20.04](https://github.com/ethz-asl/kalibr/actions/workflows/docker_2004_build.yaml/badge.svg)](https://github.com/ethz-asl/kalibr/actions/workflows/docker_2004_build.yaml)
